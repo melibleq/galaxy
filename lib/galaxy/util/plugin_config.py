@@ -89,7 +89,9 @@ def __load_plugins_from_dicts(plugins_dict, configs, extra_kwds, plugin_type_key
                 break
         assert plugin_type is not None, "Could not determine plugin type for [%s]" % config
         plugin_kwds = config
-        plugin_kwds.update(extra_kwds)
+        if extra_kwds:
+            plugin_kwds = plugin_kwds.copy()
+            plugin_kwds.update(extra_kwds)
         plugin = plugins_dict[plugin_type](**plugin_kwds)
         plugins.append(plugin)
 
