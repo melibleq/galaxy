@@ -3,6 +3,9 @@ GIS classes
 """
 
 from galaxy.datatypes.binary import Binary
+from galaxy.datatypes.image import Image
+import rasterio
+
 
 
 class Shapefile(Binary):
@@ -61,3 +64,46 @@ class Shapefile(Binary):
             return dataset.peek
         except Exception:
             return "Shapefile data"
+
+
+class GeoTIFF(Image):
+    """ The GeoTIFF data format:
+            For more information please see http://en.wikipedia.org/wiki/GeoTIFF
+    GeoTIFF image format
+    >>> from galaxy.datatypes.sniff import get_test_fname
+    >>> fname = get_test_fname('test.tiff')
+    >>> GeoTIFF().sniff(fname)
+    True
+    >>> fname = get_test_fname('interval.interval')
+    >>> GeoTIFF().sniff(fname)
+    False
+    """
+    file_ext = "geotiff"
+    edam_format = "format_webprotege_012"
+    edam_data = "data_webprotege_001"
+
+    def __init__(self, **kwd):
+        super().__init__(**kwd)
+#        self._magic =  b'GRIB'
+
+    def sniff(self, filename):
+    # A GeoTIFF file contains a coordinate reference system (CRS) that is identified by an EPSG code.
+        try:
+            filedata = rasterio.open(filename)
+            return (filedata.meta['driver'] == 'GTiff') and (filedata.meta['crs'] is not None)
+        except Exception:
+            return False
+
+    def set_peek(self, dataset, is_multi_byte=False):
+        if not dataset.dataset.purged:
+            dataset.peek = "Image GeoTIFF file"
+            dataset.blurb = nice_size(dataset.get_size())
+        else:
+            dataset.peek = 'file does not exist'
+            dataset.blurb = 'file purged from disk'
+
+    def display_peek(self, dataset):
+        try:
+            return dataset.peek
+        except Exception:
+            return "Image GeoTIFF file (%s)" % (nice_size(dataset.get_size()))
