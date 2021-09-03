@@ -6,6 +6,7 @@ import nice_size
 import rasterio
 
 from galaxy.datatypes.binary import Binary
+from galaxy.datatypes.images import Tiff
 
 
 class Shapefile(Binary):
@@ -66,7 +67,7 @@ class Shapefile(Binary):
             return "Shapefile data"
 
 
-class GeoTiff(Image):
+class GeoTiff(Tiff):
     """ The GeoTiff data format:
             For more information please see http://en.wikipedia.org/wiki/GeoTIFF
     GeoTiff image format
@@ -86,7 +87,7 @@ class GeoTiff(Image):
         super().__init__(**kwd)
 
     def sniff(self, filename):
-    	# A GeoTiff file contains a coordinate reference system (CRS) that is identified by an EPSG code.
+        # A GeoTiff file contains a coordinate reference system (CRS) that is identified by an EPSG code.
         try:
             filedata = rasterio.open(filename)
             return (filedata.meta['driver'] == 'GTiff') and (filedata.meta['crs'] is not None)
