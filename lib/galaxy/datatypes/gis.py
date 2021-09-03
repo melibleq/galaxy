@@ -2,10 +2,10 @@
 GIS classes
 """
 
-from galaxy.datatypes.binary import Binary
-from galaxy.datatypes.image import Image
-import rasterio
 import nice_size
+import rasterio
+
+from galaxy.datatypes.binary import Binary
 
 
 class Shapefile(Binary):
@@ -86,7 +86,7 @@ class GeoTiff(Image):
         super().__init__(**kwd)
 
     def sniff(self, filename):
-    # A GeoTiff file contains a coordinate reference system (CRS) that is identified by an EPSG code.
+    	# A GeoTiff file contains a coordinate reference system (CRS) that is identified by an EPSG code.
         try:
             filedata = rasterio.open(filename)
             return (filedata.meta['driver'] == 'GTiff') and (filedata.meta['crs'] is not None)
