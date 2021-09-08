@@ -2,11 +2,11 @@
 GIS classes
 """
 
-import nice_size
 import rasterio
 
 from galaxy.datatypes.binary import Binary
 from galaxy.datatypes.images import Tiff
+from galaxy.util import nice_size
 
 
 class Shapefile(Binary):
